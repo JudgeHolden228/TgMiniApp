@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор формул</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+
+        .formula {
+            background-color: white;
+            color: black;
+            padding: 15px;
+            margin: 10px auto;
+            width: 80%;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .formula:hover {
+            background-color: lightgray;
+        }
+
+        .form-container {
+            display: none;
+            margin-top: 20px;
+        }
+
+        input {
+            padding: 10px;
+            margin: 10px;
+            font-size: 16px;
+            width: 50%;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: white;
+            color: black;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: lightgray;
+        }
+    </style>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+    <h1>Калькулятор формул</h1>
+
+    <div id="formulas">
+        <div class="formula" data-formula="F = m * a">F = m × a</div>
+        <div class="formula" data-formula="E = m * c^2">E = m × c²</div>
+        <div class="formula" data-formula="V = s / t">V = s ÷ t</div>
+    </div>
+
+    <div id="form-container" class="form-container">
+        <h2 id="formula-title"></h2>
+        <form id="formula-form">
+            <div id="inputs"></div>
+            <button type="button" id="calculate-btn">Рассчитать</button>
+        </form>
+        <p id="result"></p>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        const formulas = {
+            "F = m * a": ["m", "a"],
+            "E = m * c^2": ["m", "c"],
+            "V = s / t": ["s", "t"]
+        };
+
+        document.querySelectorAll('.formula').forEach((formulaElement) => {
+            formulaElement.addEventListener('click', () => {
+                const formula = formulaElement.dataset.formula;
+                document.getElementById('formula-title').textContent = `Формула: ${formula}`;
+
+                // Генерация полей ввода
+                const inputsContainer = document.getElementById('inputs');
+                inputsContainer.innerHTML = "";
+                formulas[formula].forEach((variable) => {
+                    const inputElement = document.createElement('input');
+                    inputElement.type = "number";
+                    inputElement.placeholder = `Введите ${variable}`;
+                    inputElement.id = variable;
+                    inputsContainer.appendChild(inputElement);
+                });
+
+                // Показать форму
+                document.getElementById('form-container').style.display = "block";
+
+                // Обработка нажатия "Рассчитать"
+                document.getElementById('calculate-btn').onclick = () => {
+                    let result;
+                    if (formula === "F = m * a") {
+                        const m = parseFloat(document.getElementById('m').value);
+                        const a = parseFloat(document.getElementById('a').value);
+                        result = m * a;
+                    } else if (formula === "E = m * c^2") {
+                        const m = parseFloat(document.getElementById('m').value);
+                        const c = parseFloat(document.getElementById('c').value);
+                        result = m * c ** 2;
+                    } else if (formula === "V = s / t") {
+                        const s = parseFloat(document.getElementById('s').value);
+                        const t = parseFloat(document.getElementById('t').value);
+                        result = s / t;
+                    }
+                    document.getElementById('result').textContent = `Результат: ${result}`;
+                };
+            });
+        });
+    </script>
+</body>
+</html>
